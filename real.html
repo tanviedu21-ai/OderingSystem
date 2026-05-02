@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Food Ordering System</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+        h1 {
+            color: #333;
+        }
+        input, button {
+            margin: 10px;
+            padding: 8px;
+        }
+        #orders {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🍔 Online Food Ordering System</h1>
+
+    <input type="number" id="orderId" placeholder="Order ID">
+    <input type="text" id="foodItem" placeholder="Food Item">
+
+    <br>
+
+    <button onclick="enqueue()">Place Order</button>
+    <button onclick="dequeue()">Complete Order</button>
+    <button onclick="display()">Display Orders</button>
+
+    <div id="orders"></div>
+
+    <script>
+        const MAX = 5;
+        let queue = new Array(MAX);
+        let front = -1, rear = -1;
+
+        function isFull() {
+            return front === (rear + 1) % MAX;
+        }
+
+        function isEmpty() {
+            return front === -1;
+        }
+
+        function enqueue() {
+            let id = document.getElementById("orderId").value;
+            let item = document.getElementById("foodItem").value;
+
+            if (id === "" || item === "") {
+                alert("Please enter order details");
+                return;
+            }
+
+            if (isFull()) {
+                alert("Queue is FULL!");
+                return;
+            }
+
+            let order = { orderId: id, foodItem: item };
+
+            if (front === -1) {
+                front = rear = 0;
+            } else {
+                rear = (rear + 1) % MAX;
+            }
+
+            queue[rear] = order;
+            alert("Order placed!");
+        }
+
+        function dequeue() {
+            if (isEmpty()) {
+                alert("No orders to process");
+                return;
+            }
+
+            let order = queue[front];
+            alert("Completed Order:\nID: " + order.orderId + "\nItem: " + order.foodItem);
+
+            if (front === rear) {
+                front = rear = -1;
+            } else {
+                front = (front + 1) % MAX;
+            }
+        }
+
+        function display() {
+            let output = "<h3>Current Orders:</h3>";
+
+            if (isEmpty()) {
+                output += "No orders available";
+            } else {
+                let i = front;
+                while (true) {
+                    output += "Order ID: " + queue[i].orderId + 
+                              " | Food: " + queue[i].foodItem + "<br>";
+
+                    if (i === rear) break;
+                    i = (i + 1) % MAX;
+                }
+            }
+
+            document.getElementById("orders").innerHTML = output;
+        }
+    </script>
+
+</body>
+</html>
